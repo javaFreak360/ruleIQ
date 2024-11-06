@@ -1,0 +1,15 @@
+/Users/siddharthsharma/Downloads/ruleIQ/src/main/java/com/highcourt/ruleIQ/api/service/IRuleDefinitionService.java
+/Users/siddharthsharma/Downloads/ruleIQ/src/main/java/com/highcourt/ruleIQ/entities/FilterOperationEnum.java
+/Users/siddharthsharma/Downloads/ruleIQ/src/main/java/com/highcourt/ruleIQ/entities/ActionTypeEnum.java
+/Users/siddharthsharma/Downloads/ruleIQ/src/main/java/com/highcourt/ruleIQ/api/controller/RuleDefinitionController.java
+/Users/siddharthsharma/Downloads/ruleIQ/src/main/java/com/highcourt/ruleIQ/entities/RuleDefinition.java
+/Users/siddharthsharma/Downloads/ruleIQ/src/main/java/com/highcourt/ruleIQ/api/dao/RuleDefinitionRepository.java
+/Users/siddharthsharma/Downloads/ruleIQ/src/main/java/com/highcourt/ruleIQ/entities/ActionConverter.java
+/Users/siddharthsharma/Downloads/ruleIQ/src/main/java/com/highcourt/ruleIQ/entities/Filter.java
+/Users/siddharthsharma/Downloads/ruleIQ/src/main/java/com/highcourt/ruleIQ/entities/CriteriaConverter.java
+/Users/siddharthsharma/Downloads/ruleIQ/src/main/java/module-info.java
+/Users/siddharthsharma/Downloads/ruleIQ/src/main/java/com/highcourt/ruleIQ/ConnectivityChecker.java
+/Users/siddharthsharma/Downloads/ruleIQ/src/main/java/com/highcourt/ruleIQ/api/service/RuleDefinitionServiceImpl.java
+/Users/siddharthsharma/Downloads/ruleIQ/src/main/java/com/highcourt/ruleIQ/entities/Criteria.java
+/Users/siddharthsharma/Downloads/ruleIQ/src/main/java/com/highcourt/ruleIQ/RuleIqApplication.java
+/Users/siddharthsharma/Downloads/ruleIQ/src/main/java/com/highcourt/ruleIQ/entities/Action.java
