@@ -12,28 +12,29 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 @Component
 public class RuleManagerConsumer {
     private static final Logger logger = LoggerFactory.getLogger(RuleManagerConsumer.class);
     @Autowired
     private IRuleDefinitionService ruleDefinitionService;
-    @Value("${kafka.topic.pattern}")
-    private String topicPattern;
+    @Value("${kafka.topic.prefix}")
+    private String topicPrefix;
     @Autowired
     private ObjectMapper objectMapper;
 
     @KafkaListener(topicPattern = "${kafka.topic.pattern}", groupId = "${spring.kafka.consumer.group-id}", concurrency = "${kafka.listener.concurrency}")
-    public void listen(ConsumerRecord<String, String> record) {
+    public void listen(ConsumerRecord<String, JsonNode> record) {
         logger.info("Received message from topic: {}", record.topic());
         logger.debug("Key: {}", record.key());
         logger.debug("Value: {}", record.value());
-        var entitySource = record.topic().replace(topicPattern, "");
+        var entitySource = record.topic().replace(topicPrefix, "");
         List<RuleDefinition> ruleDefinitions = ruleDefinitionService.getRulesByDataSource(entitySource);
         try {
-            JsonNode jsonNode = objectMapper.readTree(record.value());
+            JsonNode jsonNode = record.value();
             if (jsonNode.isArray()) {
                 for(JsonNode item : jsonNode) {
                     applyRules(item, ruleDefinitions, this::evaluateRule);
@@ -44,10 +45,11 @@ public class RuleManagerConsumer {
                 logger.error("Received JSON is neither an array nor an object: {}", record.value());
             }
         }
-        catch (IOException e) {
+        catch (Exception e) {
             logger.error("Failed to parse JSON", e);
         }
     }
+
 
     private void applyRules(JsonNode data, List<RuleDefinition> ruleDefinitions, RuleEvaluator evaluator) {
         ruleDefinitions.stream().filter(rule -> {
@@ -58,7 +60,7 @@ public class RuleManagerConsumer {
                 logger.error("Failed to evaluate rule: {}", rule.getId(), e);
                 return false;
             }
-        }).forEach(o -> logger.info(o.toString()));
+        }).forEach(o -> logger.debug(o.toString()));
     }
 
     private boolean evaluateRule(JsonNode data, RuleDefinition rule) {
@@ -69,10 +71,10 @@ public class RuleManagerConsumer {
             }
             String actualValue = actualValueNode.asText();
             return switch (filter.operator()) {
-                case EQ -> filter.values().size() == 1 && actualValue.equals(filter.values().get(0));
-                case IN -> filter.values().contains(actualValue);
-                case NEQ -> filter.values().size() == 1 && !actualValue.equals(filter.values().get(0));
-                case NIN -> !filter.values().contains(actualValue);
+                case EQ -> filter.value().size() == 1 && actualValue.equals(filter.value().get(0));
+                case IN -> filter.value().contains(actualValue);
+                case NEQ -> filter.value().size() == 1 && !actualValue.equals(filter.value().get(0));
+                case NIN -> !filter.value().contains(actualValue);
                 default -> {
                     logger.warn("Unsupported operator: {}", filter.operator());
                     yield false;

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/rules")
+@RequestMapping("/rule")
 public class RuleDefinitionController {
     @Autowired
     private IRuleDefinitionService ruleDefinitionService;

@@ -5,11 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="67459502-a744-43f8-a0a7-52706d1b8e71" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/highcourt/ruleIQ/api/controller/DataSourceController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/highcourt/ruleIQ/api/service/IEventProducer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/highcourt/ruleIQ/api/service/KafkaEventProducer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/highcourt/ruleIQ/api/controller/RuleDefinitionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/highcourt/ruleIQ/api/controller/RuleDefinitionController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/highcourt/ruleIQ/consumer/RuleManagerConsumer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/highcourt/ruleIQ/consumer/RuleManagerConsumer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/highcourt/ruleIQ/entities/Filter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/highcourt/ruleIQ/entities/Filter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,17 +27,22 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
-        <option name="mavenHome" value="Use Maven wrapper" />
-        <option name="useMavenConfig" value="true" />
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
       </MavenGeneralSettings>
     </option>
   </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 6
+}]]></component>
   <component name="ProjectId" id="2oUGMYw046BPSt7OjDCYBv8HUjO" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -43,16 +52,30 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.RuleIq.executor": "Debug",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "last_opened_file_path": "/Users/jatingirdhar/Documents/ruleIQ"
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/siddharthsharma/Documents/ruleIQ/src/main/java/com/highcourt/ruleIQ/api/service",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/java/com/highcourt/ruleIQ/api/service" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.highcourt.ruleIQ.api.controller" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="RuleIq" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="com.highcourt.ruleIQ.RuleIqApplication" />
       <module name="ruleIQ" />
+      <option name="PROGRAM_PARAMETERS" value="--add-opens ruleIQ/com.highcourt.ruleIQ,java.base/java.lang=ALL-UNNAMED " />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -68,5 +91,16 @@
       <updated>1730916694442</updated>
     </task>
     <servers />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/highcourt/ruleIQ/consumer/RuleManagerConsumer.java</url>
+          <line>30</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
