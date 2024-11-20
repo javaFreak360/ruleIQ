@@ -2,7 +2,9 @@ package com.highcourt.ruleIQ.consumer;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.highcourt.ruleIQ.api.service.IEventProducer;
 import com.highcourt.ruleIQ.api.service.IRuleDefinitionService;
+import com.highcourt.ruleIQ.entities.Action;
 import com.highcourt.ruleIQ.entities.RuleDefinition;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -13,8 +15,9 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import java.util.Map;
+import java.util.Objects;
+import java.util.WeakHashMap;
 
 @Component
 public class RuleManagerConsumer {
@@ -23,8 +26,14 @@ public class RuleManagerConsumer {
     private IRuleDefinitionService ruleDefinitionService;
     @Value("${kafka.topic.prefix}")
     private String topicPrefix;
+    @Value("${kafka.action.topic.prefix}")
+    private String actionTopicPrefix;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private FilterEvaluator evaluator;
+    @Autowired
+    IEventProducer eventProducer;
 
     @KafkaListener(topicPattern = "${kafka.topic.pattern}", groupId = "${spring.kafka.consumer.group-id}", concurrency = "${kafka.listener.concurrency}")
     public void listen(ConsumerRecord<String, JsonNode> record) {
@@ -33,14 +42,15 @@ public class RuleManagerConsumer {
         logger.debug("Value: {}", record.value());
         var entitySource = record.topic().replace(topicPrefix, "");
         List<RuleDefinition> ruleDefinitions = ruleDefinitionService.getRulesByDataSource(entitySource);
+
         try {
             JsonNode jsonNode = record.value();
             if (jsonNode.isArray()) {
                 for(JsonNode item : jsonNode) {
-                    applyRules(item, ruleDefinitions, this::evaluateRule);
+                    applyRules(item, ruleDefinitions);
                 }
             } else if (jsonNode.isObject()) {
-                applyRules(jsonNode, ruleDefinitions, this::evaluateRule);
+                applyRules(jsonNode, ruleDefinitions);
             } else {
                 logger.error("Received JSON is neither an array nor an object: {}", record.value());
             }
@@ -50,37 +60,27 @@ public class RuleManagerConsumer {
         }
     }
 
-
-    private void applyRules(JsonNode data, List<RuleDefinition> ruleDefinitions, RuleEvaluator evaluator) {
-        ruleDefinitions.stream().filter(rule -> {
-            try {
-                return evaluator.evaluate(data, rule);
+    private void applyRules(JsonNode item, List<RuleDefinition> definitions) {
+        definitions.forEach(rule -> {
+            if(rule.getCriteria().stream().allMatch(filter -> evaluator.applyFilter(filter,item.get(filter.key())))){
+             executeAction(rule, item);
             }
-            catch (Exception e) {
-                logger.error("Failed to evaluate rule: {}", rule.getId(), e);
-                return false;
-            }
-        }).forEach(o -> logger.debug(o.toString()));
+        });
     }
 
-    private boolean evaluateRule(JsonNode data, RuleDefinition rule) {
-        return rule.getCriteria().stream().allMatch(filter -> {
-            JsonNode actualValueNode = getNestedValue(data, filter.key());
-            if (actualValueNode == null || actualValueNode.isMissingNode()) {
-                return false;
-            }
-            String actualValue = actualValueNode.asText();
-            return switch (filter.operator()) {
-                case EQ -> filter.value().size() == 1 && actualValue.equals(filter.value().get(0));
-                case IN -> filter.value().contains(actualValue);
-                case NEQ -> filter.value().size() == 1 && !actualValue.equals(filter.value().get(0));
-                case NIN -> !filter.value().contains(actualValue);
-                default -> {
-                    logger.warn("Unsupported operator: {}", filter.operator());
-                    yield false;
-                }
-            };
-        });
+
+    private void executeAction(RuleDefinition rule, JsonNode data){
+        if(Objects.nonNull(rule)){
+            Action action = rule.getAction();
+            logger.info("Executing action {} in rule id {}" , action, rule.getId());
+           if(action != null){
+               Map<String,String> params  = new WeakHashMap<>();
+               params.put("topicName",actionTopicPrefix.concat(action.type().name()).concat(".").concat(rule.getDataSource()));
+               eventProducer.sendEvent(data, params);
+            }else{
+                //
+           }
+        }
     }
 
     /**

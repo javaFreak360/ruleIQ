@@ -1,5 +1,5 @@
 package com.highcourt.ruleIQ.entities;
 
-public enum FilterOperationEnum {
+public enum FilterOperatorEnum {
     EQ, NEQ, LT, GT, LTE, GTE, IN, NIN;
 }
