@@ -75,6 +75,13 @@
 					<release>${java.version}</release>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>com.highcourt.ruleIQ.RuleIqApplication</mainClass> <!-- Replace with your actual main class -->
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
