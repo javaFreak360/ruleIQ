@@ -13,6 +13,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeoutException;
 public class KafkaEventProducer implements IEventProducer {
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
+    private static final Set<String> topicNames= new HashSet<>();
     @Value("${kafka.topic.prefix}")
     String topicPrefix;
     @Autowired
@@ -58,10 +60,14 @@ public class KafkaEventProducer implements IEventProducer {
      * @param topic
      */
     private void createTopicIfNotExists(String topic){
+        if(topicNames.contains(topic))
+            return;
         try (AdminClient adminClient = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
-            ListTopicsResult topics = adminClient.listTopics();
-            Set<String> names = topics.names().get(10, TimeUnit.SECONDS);
-            if(!names.contains(topic)){
+            Set<String> topics = adminClient.listTopics().names().get(10, TimeUnit.SECONDS);
+            if(topicNames.size() != topics.size()){
+                topicNames.addAll(topics);
+            }
+            if(!topicNames.contains(topic)){
                 NewTopic newTopic = new NewTopic(topic, 1, Short.valueOf("1"));
                 adminClient.createTopics(List.of(newTopic));
                 registry.getListenerContainers().forEach(MessageListenerContainer::stop);
@@ -71,7 +77,6 @@ public class KafkaEventProducer implements IEventProducer {
                             Thread.sleep(100);
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
-                            // Optionally handle interruption
                         }
                     }
                 });

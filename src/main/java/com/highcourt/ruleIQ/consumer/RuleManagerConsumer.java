@@ -38,11 +38,8 @@ public class RuleManagerConsumer {
     @KafkaListener(topicPattern = "${kafka.topic.pattern}", groupId = "${spring.kafka.consumer.group-id}", concurrency = "${kafka.listener.concurrency}")
     public void listen(ConsumerRecord<String, JsonNode> record) {
         logger.info("Received message from topic: {}", record.topic());
-        logger.debug("Key: {}", record.key());
-        logger.debug("Value: {}", record.value());
         var entitySource = record.topic().replace(topicPrefix, "");
         List<RuleDefinition> ruleDefinitions = ruleDefinitionService.getRulesByDataSource(entitySource);
-
         try {
             JsonNode jsonNode = record.value();
             if (jsonNode.isArray()) {
@@ -76,6 +73,9 @@ public class RuleManagerConsumer {
            if(action != null){
                Map<String,String> params  = new WeakHashMap<>();
                params.put("topicName",actionTopicPrefix.concat(action.type().name()).concat(".").concat(rule.getDataSource()));
+               switch (action.type()){
+                   case FORWARD -> params.put("topicName", topicPrefix.concat(action.args().get("target").toString()));
+               }
                eventProducer.sendEvent(data, params);
             }else{
                 //

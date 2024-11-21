@@ -55,6 +55,9 @@ public class RuleDefinitionServiceImpl implements IRuleDefinitionService {
             })
     @Override
     public RuleDefinition updateRule(RuleDefinition ruleDefinition) {
+        var ruleDef = ruleDefinitionRepository.findById(ruleDefinition.getId());
+        if(ruleDef == null)
+            throw new UnsupportedOperationException();
         // Optionally add checks to ensure the rule exists
         return ruleDefinitionRepository.save(ruleDefinition);
     }
