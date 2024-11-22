@@ -43,7 +43,7 @@ public class RuleManagerConsumer {
         try {
             JsonNode jsonNode = record.value();
             if (jsonNode.isArray()) {
-                for(JsonNode item : jsonNode) {
+                for (JsonNode item : jsonNode) {
                     applyRules(item, ruleDefinitions);
                 }
             } else if (jsonNode.isObject()) {
@@ -51,46 +51,45 @@ public class RuleManagerConsumer {
             } else {
                 logger.error("Received JSON is neither an array nor an object: {}", record.value());
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Failed to parse JSON", e);
         }
     }
 
     private void applyRules(JsonNode item, List<RuleDefinition> definitions) {
         definitions.forEach(rule -> {
-            if(rule.getCriteria().stream().allMatch(filter -> evaluator.applyFilter(filter,item.get(filter.key())))){
-             executeAction(rule, item);
+            if (rule.getCriteria().stream().allMatch(filter -> evaluator.applyFilter(filter, getNestedValue(item, filter.key())))) {
+                executeAction(rule, item);
             }
         });
     }
 
 
-    private void executeAction(RuleDefinition rule, JsonNode data){
-        if(Objects.nonNull(rule)){
+    private void executeAction(RuleDefinition rule, JsonNode data) {
+        if (Objects.nonNull(rule)) {
             Action action = rule.getAction();
-            logger.info("Executing action {} in rule id {}" , action, rule.getId());
-           if(action != null){
-               Map<String,String> params  = new WeakHashMap<>();
-               params.put("topicName",actionTopicPrefix.concat(action.type().name()).concat(".").concat(rule.getDataSource()));
-               switch (action.type()){
-                   case FORWARD -> params.put("topicName", action.args().get("target").asText());
-               }
-               eventProducer.sendEvent(data, params);
-            }else{
+            logger.info("Executing action {} in rule id {}", action, rule.getId());
+            if (action != null) {
+                Map<String, String> params = new WeakHashMap<>();
+                params.put("topicName", actionTopicPrefix.concat(action.type().name()).concat(".").concat(rule.getDataSource()));
+                switch (action.type()) {
+                    case FORWARD -> params.put("topicName", action.args().get("target").asText());
+                }
+                eventProducer.sendEvent(data, params);
+            } else {
                 //
-           }
+            }
         }
     }
 
     /**
-     * Retrieves the nested value in the JsonNode based on the dot-separated path.
-     * E.g., "status.code" will retrieve data["status"]["code"].
+     * Retrieves the nested value in the JsonNode based on the dot-separated path. E.g.,
+     * "status.code" will retrieve data["status"]["code"].
      */
     private JsonNode getNestedValue(JsonNode node, String path) {
         String[] keys = path.split("\\.");
         JsonNode currentNode = node;
-        for(String key : keys) {
+        for (String key : keys) {
             if (currentNode == null || currentNode.isMissingNode()) {
                 return null; // Return null if any intermediate node is missing
             }
