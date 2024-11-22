@@ -11,14 +11,14 @@ import org.springframework.stereotype.Component;
 public class LogActionConsumer implements IAction {
     private static final Logger logger = LoggerFactory.getLogger(LogActionConsumer.class);
 
-    @KafkaListener(topicPattern = "${kafka.action.topic.pattern}", groupId = "${spring.kafka.consumer.group-id}", concurrency = "${kafka.listener.concurrency}")
+    @KafkaListener(topicPattern = "${kafka.action.log.topic.pattern}", groupId = "${spring.kafka.consumer.group-id}", concurrency = "${kafka.listener.concurrency}")
     public void listen(ConsumerRecord<String, JsonNode> record) {
-        logger.debug("Log consumer received record with key {} value {} from topic {}",record.key(), record.value(), record.topic());
+        //logger.debug("Log consumer received record with key {} value {} from topic {}",record.key(), record.value(), record.topic());
         perform(record.value());
     }
 
     @Override
     public void perform(JsonNode data) {
-        logger.debug("Log consumer received record with data : {}", data );
+        logger.info("Log consumer received record with data : {}", data );
     }
 }

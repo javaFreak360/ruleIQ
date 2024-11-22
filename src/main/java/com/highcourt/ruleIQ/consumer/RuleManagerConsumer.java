@@ -35,7 +35,7 @@ public class RuleManagerConsumer {
     @Autowired
     IEventProducer eventProducer;
 
-    @KafkaListener(topicPattern = "${kafka.topic.pattern}", groupId = "${spring.kafka.consumer.group-id}", concurrency = "${kafka.listener.concurrency}")
+    @KafkaListener(topicPattern = "${kafka.rule.manager.topic.pattern}", groupId = "${spring.kafka.consumer.group-id}", concurrency = "${kafka.listener.concurrency}")
     public void listen(ConsumerRecord<String, JsonNode> record) {
         logger.info("Received message from topic: {}", record.topic());
         var entitySource = record.topic().replace(topicPrefix, "");
@@ -74,7 +74,7 @@ public class RuleManagerConsumer {
                Map<String,String> params  = new WeakHashMap<>();
                params.put("topicName",actionTopicPrefix.concat(action.type().name()).concat(".").concat(rule.getDataSource()));
                switch (action.type()){
-                   case FORWARD -> params.put("topicName", topicPrefix.concat(action.args().get("target").toString()));
+                   case FORWARD -> params.put("topicName", action.args().get("target").asText());
                }
                eventProducer.sendEvent(data, params);
             }else{

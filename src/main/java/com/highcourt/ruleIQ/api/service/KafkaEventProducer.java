@@ -26,16 +26,28 @@ public class KafkaEventProducer implements IEventProducer {
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     private static final Set<String> topicNames= new HashSet<>();
+
     @Value("${kafka.topic.prefix}")
     String topicPrefix;
-    @Autowired
+
     private KafkaAdmin kafkaAdmin;
+
     @Autowired
     KafkaListenerEndpointRegistry registry;
 
     @Autowired
-    public KafkaEventProducer(KafkaTemplate<String, Object> kafkaTemplate){
+    public KafkaEventProducer(KafkaTemplate<String, Object> kafkaTemplate, KafkaAdmin kafkaAdmin){
         this.kafkaTemplate = kafkaTemplate;
+        this.kafkaAdmin = kafkaAdmin;
+        try (AdminClient adminClient = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
+            topicNames.addAll(adminClient.listTopics().names().get(10, TimeUnit.SECONDS));
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (TimeoutException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -68,6 +80,7 @@ public class KafkaEventProducer implements IEventProducer {
                 topicNames.addAll(topics);
             }
             if(!topicNames.contains(topic)){
+                topicNames.add(topic);
                 NewTopic newTopic = new NewTopic(topic, 1, Short.valueOf("1"));
                 adminClient.createTopics(List.of(newTopic));
                 registry.getListenerContainers().forEach(MessageListenerContainer::stop);

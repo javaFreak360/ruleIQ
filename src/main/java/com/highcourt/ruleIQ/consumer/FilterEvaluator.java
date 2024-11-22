@@ -17,7 +17,7 @@ import java.util.List;
 @Component
 public class FilterEvaluator {
     public boolean applyFilter(Filter filter, Object fieldValue) {
-        FilterType type = filter.type() != null ? FilterType.valueOf(filter.type().toUpperCase()) : FilterType.STRING;
+        FilterType type = filter.type() != null ? FilterType.valueOf(filter.type().name()) : FilterType.STRING;
         FilterOperatorEnum operator = filter.operator();
         switch (type) {
             case NUMBER:
