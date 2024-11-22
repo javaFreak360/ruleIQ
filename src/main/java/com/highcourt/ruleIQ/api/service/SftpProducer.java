@@ -43,10 +43,10 @@ public class SftpProducer implements IFileProducer{
             try (OutputStream os = new FileOutputStream(new File(localFilePath))) {
                 session.read(remoteFilePath, os);
                 logger.info("File downloaded successfully to {}", localFilePath);
+            }catch(Exception e){
+                logger.error("Error while downloading file {} {}", remoteFilePath, e.getMessage());
             }
 
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to download file from SFTP server", e);
         } finally {
             if (session != null && session.isOpen()) {
                 session.close();
