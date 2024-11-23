@@ -3,6 +3,7 @@ package com.highcourt.ruleIQ.api.pojo;
 public class ConsumerFileRequest {
     String topicName;
     String fileName;
+    String remoteFilePath;
 
     public String getTopicName() {
         return topicName;
@@ -18,5 +19,13 @@ public class ConsumerFileRequest {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public String getRemoteFilePath() {
+        return remoteFilePath;
+    }
+
+    public void setRemoteFilePath(String remoteFilePath) {
+        this.remoteFilePath = remoteFilePath;
     }
 }

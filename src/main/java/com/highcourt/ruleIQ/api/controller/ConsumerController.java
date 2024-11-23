@@ -3,6 +3,7 @@ package com.highcourt.ruleIQ.api.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.highcourt.ruleIQ.api.pojo.ConsumerFileRequest;
+import com.highcourt.ruleIQ.api.service.IFileService;
 import com.highcourt.ruleIQ.consumer.LogActionConsumer;
 import com.opencsv.CSVWriter;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -11,6 +12,7 @@ import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,12 +34,13 @@ import java.util.Set;
 @RequestMapping("consume/")
 public class ConsumerController {
 
-
+    IFileService sftpProducer;
     private final ConsumerFactory<String, JsonNode> consumerFactory;
     private ObjectMapper objectMapper;
     private static final Logger logger = LoggerFactory.getLogger(ConsumerController.class);
     @Autowired
-    public ConsumerController(ConsumerFactory<String, JsonNode> consumerFactory, ObjectMapper objectMapper) {
+    public ConsumerController(@Qualifier("sftpProducer") IFileService sftpProducer, ConsumerFactory<String, JsonNode> consumerFactory, ObjectMapper objectMapper) {
+        this.sftpProducer = sftpProducer;
         this.consumerFactory = consumerFactory;
         this.objectMapper=objectMapper;
     }
@@ -46,11 +49,10 @@ public class ConsumerController {
     public ResponseEntity evaluate(@RequestBody ConsumerFileRequest fileRequest) {
         var topicName = fileRequest.getTopicName();
         var fileName = fileRequest.getFileName();
-
         if (topicName != null && fileName != null) {
-
             consumeAllRecords(topicName, fileName);
         }
+        sftpProducer.upload(fileName, fileRequest.getRemoteFilePath());
         return ResponseEntity.accepted().build();
     }
 
@@ -135,6 +137,7 @@ public class ConsumerController {
 
             // Write all rows
             writer.writeAll(recordsList);
+
         }
     }
 }
