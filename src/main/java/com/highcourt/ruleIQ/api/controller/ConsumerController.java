@@ -132,12 +132,8 @@ public class ConsumerController {
 
     private void writeToCsv(String outputCsvFile, String[] headers, List<String[]> recordsList) throws IOException {
         try (CSVWriter writer = new CSVWriter(new FileWriter(outputCsvFile))) {
-            // Write headers
             writer.writeNext(headers);
-
-            // Write all rows
             writer.writeAll(recordsList);
-
         }
     }
 }

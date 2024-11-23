@@ -88,7 +88,8 @@ public class DataSourceController {
                default -> sftpProducer;
            };
            var localFilePath = request.getLocalFilePath() != null ? request.getLocalFilePath() : request.getRemoteFilePath();
-           fileProducer.download(request.getRemoteFilePath(), localFilePath);
+           if(request.getRemoteFilePath() != null)
+               fileProducer.download(request.getRemoteFilePath(), localFilePath);
            List<JsonNode> fileDataList = readFile(new File(localFilePath));
            fileDataList.forEach(data -> this.eventProducer.sendEvent(data, Map.of(TOPIC_NAME, request.getEntity())));
        }
