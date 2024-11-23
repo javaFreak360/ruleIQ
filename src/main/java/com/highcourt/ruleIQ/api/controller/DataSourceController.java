@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.highcourt.ruleIQ.api.pojo.FileProducerRequest;
 import com.highcourt.ruleIQ.api.service.IEventProducer;
 import com.highcourt.ruleIQ.api.service.IFileService;
+import com.highcourt.ruleIQ.api.service.SftpService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -36,6 +39,7 @@ public class DataSourceController {
     IFileService sftpProducer;
 
     ObjectMapper mapper;
+    private static final Logger logger = LoggerFactory.getLogger(DataSourceController.class);
 
     private static final String TOPIC_NAME = "topicName";
 
@@ -112,17 +116,20 @@ public class DataSourceController {
      * @param file
      * @return
      */
-    private List<JsonNode> readFile(File file){
+    private List<JsonNode> readFile(File file) {
         List<JsonNode> objects = new LinkedList<>();
         JsonNode rootNode = null;
         try {
+            logger.info("Reading file started");
             rootNode = mapper.readTree(file);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
-        if(rootNode.isArray()){
+        logger.info("Reading file complete");
+        if (rootNode.isArray()) {
             rootNode.elements().forEachRemaining(node -> objects.add(node));
-        }else{
+        } else {
             objects.add(rootNode);
         }
         return objects;
