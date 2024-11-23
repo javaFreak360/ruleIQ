@@ -19,7 +19,7 @@ import java.util.Map;
 @Configuration
 public class BatchConsumerConfiguration {
 
-    @Value("${spring.kafka.action.consumer.group-id}")
+    @Value("${spring.kafka.bulk.action.consumer.group-id}")
     private String actionGroupId;
 
     private KafkaProperties kafkaProperties;

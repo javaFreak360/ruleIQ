@@ -6,8 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="67459502-a744-43f8-a0a7-52706d1b8e71" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/highcourt/ruleIQ/api/controller/ConsumerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/highcourt/ruleIQ/api/controller/ConsumerController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/highcourt/ruleIQ/api/controller/DataSourceController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/highcourt/ruleIQ/api/controller/DataSourceController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/highcourt/ruleIQ/configuration/BatchConsumerConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/highcourt/ruleIQ/configuration/BatchConsumerConfiguration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

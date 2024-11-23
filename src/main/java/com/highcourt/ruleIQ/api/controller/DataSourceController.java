@@ -79,6 +79,18 @@ public class DataSourceController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("{entity}/files")
+    public ResponseEntity evaluateFile(@RequestBody List<FileProducerRequest> requests, @PathVariable String entity) {
+        Map<String, String> params = new WeakHashMap<>();
+        requests.stream()
+                .forEach(request -> CompletableFuture.runAsync(() -> {
+
+                    consumeFile.accept(request);
+                }));
+
+        return ResponseEntity.ok().build();
+    }
+
     /**
      *
      */
