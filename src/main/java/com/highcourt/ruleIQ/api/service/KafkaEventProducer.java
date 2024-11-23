@@ -83,22 +83,22 @@ public class KafkaEventProducer implements IEventProducer {
                 topicNames.add(topic);
                 NewTopic newTopic = new NewTopic(topic, 1, Short.valueOf("1"));
                 adminClient.createTopics(List.of(newTopic));
-                registry.getListenerContainers().forEach(MessageListenerContainer::stop);
-                registry.getListenerContainers().forEach(container -> {
-                    while (container.isRunning()) {
-                        try {
-                            Thread.sleep(100);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
-                    }
-                });
-                registry.getListenerContainers().forEach(container -> {
-                    if (!container.isRunning()) {
-                        System.out.println("Starting listener: " + container.getContainerProperties().getGroupId());
-                        container.start();
-                    }
-                });
+//                registry.getListenerContainers().forEach(MessageListenerContainer::stop);
+//                registry.getListenerContainers().forEach(container -> {
+//                    while (container.isRunning()) {
+//                        try {
+//                            Thread.sleep(100);
+//                        } catch (InterruptedException e) {
+//                            Thread.currentThread().interrupt();
+//                        }
+//                    }
+//                });
+//                registry.getListenerContainers().forEach(container -> {
+//                    if (!container.isRunning()) {
+//                        System.out.println("Starting listener: " + container.getContainerProperties().getGroupId());
+//                        container.start();
+//                    }
+//                });
             }
         } catch (ExecutionException e) {
             throw new RuntimeException(e);

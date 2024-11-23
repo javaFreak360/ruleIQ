@@ -7,6 +7,7 @@ import com.highcourt.ruleIQ.api.service.IEventProducer;
 import com.highcourt.ruleIQ.api.service.IFileService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +27,7 @@ import java.util.function.Consumer;
 
 @RestController
 @RequestMapping("rule/evaluate")
+@Component
 public class DataSourceController {
 
 
