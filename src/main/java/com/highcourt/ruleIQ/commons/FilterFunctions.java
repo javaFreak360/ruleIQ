@@ -39,6 +39,12 @@ public class FilterFunctions {
         map.put(FilterOperatorEnum.NEQ, (fieldValue, values) -> !fieldValue.equals(values.get(0)));
         map.put(FilterOperatorEnum.IN, (fieldValue, values) -> values.contains(fieldValue));
         map.put(FilterOperatorEnum.NIN, (fieldValue, values) -> !values.contains(fieldValue));
+        map.put(FilterOperatorEnum.CONTAINS, (fieldValue, values) ->
+            values.stream().anyMatch(value -> fieldValue.contains(value))
+        );
+        map.put(FilterOperatorEnum.NOT_CONTAINS, (fieldValue, values) ->
+                values.stream().noneMatch(value -> fieldValue.contains(value))
+        );
         return map;
     }
 

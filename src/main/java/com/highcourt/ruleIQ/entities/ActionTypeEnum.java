@@ -1,5 +1,5 @@
 package com.highcourt.ruleIQ.entities;
 
 public enum ActionTypeEnum {
-    LOG, DATABASE, FORWARD
+    LOG, DATABASE, FORWARD, FILE
 }

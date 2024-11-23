@@ -58,9 +58,15 @@ public class RuleManagerConsumer {
 
     private void applyRules(JsonNode item, List<RuleDefinition> definitions) {
         definitions.forEach(rule -> {
-            if (rule.getCriteria().stream().allMatch(filter -> evaluator.applyFilter(filter, getNestedValue(item, filter.key())))) {
+            var operator = rule.getCriteriaOperator() != null ? rule.getCriteriaOperator() : "AND";
+            boolean result = switch (operator){
+                case "OR" -> rule.getCriteria().stream().anyMatch(filter -> evaluator.applyFilter(filter, getNestedValue(item, filter.key())));
+                default -> rule.getCriteria().stream().allMatch(filter -> evaluator.applyFilter(filter, getNestedValue(item, filter.key())));
+            };
+            if(result) {
                 executeAction(rule, item);
             }
+
         });
     }
 
@@ -74,6 +80,10 @@ public class RuleManagerConsumer {
                 params.put("topicName", actionTopicPrefix.concat(action.type().name()).concat(".").concat(rule.getDataSource()));
                 switch (action.type()) {
                     case FORWARD -> params.put("topicName", action.args().get("target").asText());
+                    case FILE -> {
+                        params.put("fileName", action.args().get("fileName").asText());
+                        params.put("uploadType", action.args().get("type").asText());
+                    }
                 }
                 eventProducer.sendEvent(data, params);
             } else {

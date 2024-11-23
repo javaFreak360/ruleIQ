@@ -27,6 +27,9 @@ public class RuleDefinition implements Serializable {
     @Column(name = "entity_source")
     private String dataSource;
 
+    @Column(name= "criteria_operator")
+    private String criteriaOperator;
+
     @Convert(converter = CriteriaConverter.class)
     @Column(columnDefinition = "json")
     private List<Filter> criteria;
@@ -65,6 +68,14 @@ public class RuleDefinition implements Serializable {
 
     public void setDataSource(String dataSource) {
         this.dataSource = dataSource;
+    }
+
+    public String getCriteriaOperator() {
+        return criteriaOperator;
+    }
+
+    public void setCriteriaOperator(String criteriaOperator) {
+        this.criteriaOperator = criteriaOperator;
     }
 
     public List<Filter> getCriteria() {

@@ -4,11 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.highcourt.ruleIQ.api.pojo.FileProducerRequest;
 import com.highcourt.ruleIQ.api.service.IEventProducer;
-import com.highcourt.ruleIQ.api.service.IFileProducer;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.highcourt.ruleIQ.api.service.IFileService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -26,9 +23,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
-import static com.highcourt.ruleIQ.api.pojo.FileProducerType.SFTP;
 
 @RestController
 @RequestMapping("rule/evaluate")
@@ -37,7 +31,7 @@ public class DataSourceController {
 
     IEventProducer eventProducer;
 
-    IFileProducer sftpProducer;
+    IFileService sftpProducer;
 
     ObjectMapper mapper;
 
@@ -45,7 +39,7 @@ public class DataSourceController {
 
     ExecutorService executor = Executors.newFixedThreadPool(10);
 
-    public DataSourceController(@Qualifier("sftpProducer") IFileProducer sftpProducer, ObjectMapper mapper, IEventProducer eventProducer){
+    public DataSourceController(@Qualifier("sftpProducer") IFileService sftpProducer, ObjectMapper mapper, IEventProducer eventProducer){
         this.sftpProducer = sftpProducer;
         this.mapper = mapper;
         this.eventProducer = eventProducer;
@@ -88,7 +82,7 @@ public class DataSourceController {
      */
     private Consumer<FileProducerRequest> consumeFile = (request -> {
        if(request != null){
-           IFileProducer fileProducer =  switch (request.getProducerType()){
+           IFileService fileProducer =  switch (request.getProducerType()){
                default -> sftpProducer;
            };
            var localFilePath = request.getLocalFilePath() != null ? request.getLocalFilePath() : request.getRemoteFilePath();
@@ -104,6 +98,27 @@ public class DataSourceController {
      * @return
      */
     private List<JsonNode> readFile(File file){
+        List<JsonNode> objects = new LinkedList<>();
+        JsonNode rootNode = null;
+        try {
+            rootNode = mapper.readTree(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        if(rootNode.isArray()){
+            rootNode.elements().forEachRemaining(node -> objects.add(node));
+        }else{
+            objects.add(rootNode);
+        }
+        return objects;
+    }
+
+    /**
+     * Read Json object from File
+     * @param file
+     * @return
+     */
+    private List<JsonNode> readFileXml(File file){
         List<JsonNode> objects = new LinkedList<>();
         JsonNode rootNode = null;
         try {

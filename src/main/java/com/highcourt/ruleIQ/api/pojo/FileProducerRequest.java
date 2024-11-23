@@ -4,6 +4,7 @@ public class FileProducerRequest {
 
     FileProducerType producerType;
     String entity;
+
     String remoteFilePath;
     String localFilePath;
 
